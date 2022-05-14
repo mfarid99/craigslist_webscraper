@@ -16,7 +16,7 @@ const scrapingResults = [
 ]
 
 async function main() {
-    const browser = await puppeteer.launch({ headless: false });
+    const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto('https://washingtondc.craigslist.org/search/sof');
     const html = await page.content();
@@ -25,7 +25,14 @@ async function main() {
     $('.result-title').each((index, element) => console.log($(element).text()));
     $('.result-title').each((index, element) => console.log($(element).attr("href")))
 
-
+    const results = $('.result-title').map((index, element) => {
+        const title = $(element).text();
+        const url = $(element).attr("href");
+        return {
+            title, url
+        }
+    }).get();
+    console.log(results);
 }
 
 main();
