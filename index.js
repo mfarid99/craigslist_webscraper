@@ -25,11 +25,17 @@ async function main() {
     $('.result-title').each((index, element) => console.log($(element).text()));
     $('.result-title').each((index, element) => console.log($(element).attr("href")))
 
-    const results = $('.result-title').map((index, element) => {
-        const title = $(element).text();
-        const url = $(element).attr("href");
+    const results = $('.result-info').map((index, element) => {
+        const titleElement = $(element).find(".result-title");
+        const timeElement = $(element).find(".result-date")
+        const neighborhoodElement = $(element).find(".result-hood")
+        const title = $(titleElement).text();
+        const url = $(titleElement).attr("href");
+        const datePosted = new Date($(timeElement).attr("datetime"))
+
+        const neighborhood = $(neighborhoodElement).text();
         return {
-            title, url
+            title, url, datePosted, neighborhood
         }
     }).get();
     console.log(results);
