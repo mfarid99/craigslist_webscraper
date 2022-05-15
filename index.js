@@ -15,17 +15,16 @@ const scrapingResults = [
     }
 ]
 
-async function main() {
-    const browser = await puppeteer.launch({ headless: true });
-    const page = await browser.newPage();
+async function scrapeListings(page) {
+    
     await page.goto('https://washingtondc.craigslist.org/search/sof');
     const html = await page.content();
     const $ = cheerio.load(html);
 
-    $('.result-title').each((index, element) => console.log($(element).text()));
-    $('.result-title').each((index, element) => console.log($(element).attr("href")))
+    // $('.result-title').each((index, element) => console.log($(element).text()));
+    // $('.result-title').each((index, element) => console.log($(element).attr("href")))
 
-    const results = $('.result-info').map((index, element) => {
+    const listings = $('.result-info').map((index, element) => {
         const titleElement = $(element).find(".result-title");
         const timeElement = $(element).find(".result-date")
         const neighborhoodElement = $(element).find(".result-hood")
@@ -33,12 +32,37 @@ async function main() {
         const url = $(titleElement).attr("href");
         const datePosted = new Date($(timeElement).attr("datetime"))
 
-        const neighborhood = $(neighborhoodElement).text();
+        const neighborhood = $(neighborhoodElement)
+        .text()
+        .trim()
+        .replace("(","")
+        .replace(")","")
         return {
             title, url, datePosted, neighborhood
         }
     }).get();
-    console.log(results);
+return listings
+}
+
+async function scrapeJobDescription(listings, page){
+for(i = 0; i < listings.length; i++){
+    await page.goto(listings[i].url);
+    const html = await page.content();
+    await sleep(3000);
+}
+}
+
+async function sleep(time){
+    return new Promise(resolve => setTimeout(resolve, time));
+}
+
+async function main () {
+    const browser = await puppeteer.launch({ headless: false });
+    const page = await browser.newPage();
+    const listings = await scrapeListings(page);
+    const listingsJobDescription = await scrapeJobDescription(listings, page);
+
+    console.log(listings)
 }
 
 main();
