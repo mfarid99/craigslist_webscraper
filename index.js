@@ -50,8 +50,12 @@ for(i = 0; i < listings.length; i++){
     const html = await page.content();
     const $ = cheerio.load(html)
     const jobDescription = $('#postingbody').text();
+    const compensation  =$('p.attrgroup > span:nth-child(1) > b').text();
     listings[i].jobDescription = jobDescription;
+    listings[i].compensation = compensation;
     console.log(listings[i].jobDescription)
+    console.log('compensation ', listings[i].compensation)
+
     await sleep(3000);
 }
 }
