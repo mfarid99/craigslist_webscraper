@@ -1,5 +1,6 @@
 const puppeteer = require("puppeteer");
 const cheerio = require("cheerio");
+const mongoose = require('mongoose')
 
 const scrapingResults = [
     {
@@ -14,6 +15,11 @@ const scrapingResults = [
 
     }
 ]
+
+async function connectToMongoDb(){
+    await mongoose.connect('mongodb+srv://mfarid99:Ccc64kYqIgQotCYO@sei.mfupj.azure.mongodb.net/?retryWrites=true&w=majority')
+    console.log('we are connected to mongo db')
+}
 
 async function scrapeListings(page) {
     
@@ -65,6 +71,7 @@ async function sleep(time){
 }
 
 async function main () {
+    await connectToMongoDb();
     const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
     const listings = await scrapeListings(page);
